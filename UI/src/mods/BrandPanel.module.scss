@@ -1,0 +1,41 @@
+$boxSize: 15rem;
+
+.BrandChangerPanel {
+  position: absolute;
+  top: calc(16rem + var(--floatingToggleSize));
+  left: 420rem;
+  bottom: 6rem;
+  z-index: calc(var(--tooltipIndex) - 1);
+}
+
+.BrandColorBox {
+  width: $boxSize;
+  height: $boxSize;
+}
+
+.BrandCurrent {
+  font-weight: bold !important;
+  text-transform: uppercase;
+}
+
+.BrandCurrentRow {
+  background-color: var(--accentColorNormal);
+}
+
+.BrandCurrentRow > div {
+  color: white;
+}
+
+.BrandRow:hover {
+  background-color: var(--accentColorNormal-hover);
+  color: var(--menuControl1) !important;
+}
+
+.BrandRow:hover * {
+  color: var(--menuControl1) !important;
+}
+
+.BrandImage {
+  width: 20rem;
+  height: 20rem;
+}
