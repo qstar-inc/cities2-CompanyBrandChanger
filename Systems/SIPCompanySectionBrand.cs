@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Colossal.Entities;
+﻿using Colossal.Entities;
 using Colossal.Serialization.Entities;
 using Colossal.UI.Binding;
 using Game;
-using Game.Areas;
 using Game.Buildings;
-using Game.Common;
 using Game.Companies;
 using Game.Prefabs;
 using Game.UI;
 using Game.UI.InGame;
-using Unity.Collections;
 using Unity.Entities;
 
 namespace CompanyBrandChanger.Systems
@@ -29,7 +21,6 @@ namespace CompanyBrandChanger.Systems
         public static Entity SelectedEntity { get; set; }
         public static string CurrentBrandName { get; set; }
 
-        private PrefabSystem prefabSystem;
         private NameSystem nameSystem;
 
         public override void OnWriteProperties(IJsonWriter writer) { }
@@ -43,7 +34,6 @@ namespace CompanyBrandChanger.Systems
             base.OnCreate();
             m_InfoUISystem.AddMiddleSection(this);
             Mod.log.Info("SIPCompanySectionBrand created");
-            prefabSystem = World.GetOrCreateSystemManaged<PrefabSystem>();
             nameSystem = World.GetOrCreateSystemManaged<NameSystem>();
 
             Enabled = false;
@@ -97,7 +87,7 @@ namespace CompanyBrandChanger.Systems
                     }
                 }
             }
-            SelectedEntity = new Entity { Index = -1, Version = -1 };
+            SelectedEntity = Entity.Null;
             return false;
         }
     }

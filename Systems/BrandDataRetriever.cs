@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Colossal.Entities;
-using Colossal.IO.AssetDatabase;
 using Colossal.Serialization.Entities;
 using Game;
 using Game.Prefabs;
 using Game.UI;
-using Game.UI.InGame;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -47,11 +41,14 @@ namespace CompanyBrandChanger.Systems
         protected override void OnGameLoadingComplete(Purpose purpose, GameMode mode)
         {
             base.OnGameLoadingComplete(purpose, mode);
+            if (mode != GameMode.Game)
+                return;
             brandQuery = SystemAPI.QueryBuilder().WithAll<BrandData>().Build();
             NativeArray<Entity> brandEntitiesFromQuery = brandQuery.ToEntityArray(Allocator.Temp);
 
             if (brandDataInfos.Count == 0 || prevEntityCount != brandEntitiesFromQuery.Length)
             {
+                brandDataInfos.Clear();
                 prevEntityCount = brandEntitiesFromQuery.Length;
                 foreach (var entity in brandEntitiesFromQuery)
                 {

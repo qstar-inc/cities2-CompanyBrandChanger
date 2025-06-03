@@ -2,6 +2,7 @@
 using System.Linq;
 using Colossal.Entities;
 using CompanyBrandChanger.Systems.UI;
+using Game;
 using Game.Buildings;
 using Game.Common;
 using Game.Companies;
@@ -13,7 +14,8 @@ namespace CompanyBrandChanger.Systems
 {
     public partial class Panel : ExtendedUISystemBase
     {
-        private ValueBindingHelper<string> SelectedEntityValue;
+        public override GameMode gameMode => GameMode.Game;
+        private ValueBindingHelper<Entity> SelectedEntityValue;
         private ValueBindingHelper<string> CurrentBrandValue;
         private ValueBindingHelper<BrandDataInfo[]> BrandDataInfoArray;
         private bool isBrandDataSet;
@@ -21,18 +23,17 @@ namespace CompanyBrandChanger.Systems
         protected override void OnCreate()
         {
             base.OnCreate();
-            SelectedEntityValue = CreateBinding("SelectedEntity", "-1:-1");
+            SelectedEntityValue = CreateBinding("SelectedEntity", Entity.Null);
             CurrentBrandValue = CreateBinding("CurrentBrand", "Unknown");
             BrandDataInfoArray = CreateBinding("BrandDataInfoArray", new BrandDataInfo[0]);
-            CreateTrigger<string, string>("SetBrand", SetBrand);
+            CreateTrigger<string, Entity>("SetBrand", SetBrand);
             isBrandDataSet = false;
         }
 
         protected override void OnUpdate()
         {
             base.OnUpdate();
-            SelectedEntityValue.Value =
-                $"{SIPCompanySectionBrand.SelectedEntity.Index}:{SIPCompanySectionBrand.SelectedEntity.Version}";
+            SelectedEntityValue.Value = SIPCompanySectionBrand.SelectedEntity;
             CurrentBrandValue.Value = SIPCompanySectionBrand.CurrentBrandName;
             if (!isBrandDataSet || BrandDataRetriever.hasNewData)
             {
@@ -43,34 +44,19 @@ namespace CompanyBrandChanger.Systems
             }
         }
 
-        public void SetBrand(string replaceBrand, string entityId)
+        public void SetBrand(string replaceBrand, Entity entity)
         {
             try
             {
                 var match = BrandDataRetriever.brandDataInfos.FirstOrDefault(b =>
                     b.PrefabName == replaceBrand
                 );
-                if (
-                    entityId == string.Empty
-                    || replaceBrand == string.Empty
-                    || !entityId.Contains(":")
-                    || match == null
-                )
+                if (entity == Entity.Null || replaceBrand == string.Empty || match == null)
                     return;
 
-                string[] parts = entityId.Split(':');
-                int index = int.Parse(parts[0]);
-                int version = int.Parse(parts[1]);
-
-                Entity propertyEntity = new() { Index = index, Version = version };
-
-                if (EntityManager.Exists(propertyEntity))
+                if (EntityManager.Exists(entity))
                 {
-                    EntityManager.TryGetBuffer(
-                        propertyEntity,
-                        false,
-                        out DynamicBuffer<Renter> renters
-                    );
+                    EntityManager.TryGetBuffer(entity, false, out DynamicBuffer<Renter> renters);
 
                     for (int i = 0; i < renters.Length; i++)
                     {
@@ -85,10 +71,10 @@ namespace CompanyBrandChanger.Systems
                                 continue;
                             companyData.m_Brand = match.Entity;
                             CurrentBrandValue.Value = match.Name;
-                            Mod.log.Info($"{match.Name} set to Entity {entityId} successfully");
+                            Mod.log.Info($"{match.Name} set successfully");
 
                             EntityManager.SetComponentData(renterEntity, companyData);
-                            EntityManager.AddComponent<Updated>(propertyEntity);
+                            EntityManager.AddComponent<Updated>(entity);
                             break;
                         }
                     }

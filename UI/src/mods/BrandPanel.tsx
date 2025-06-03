@@ -12,14 +12,14 @@ import { PanelSection, PanelSectionRow, Scrollable } from "cs2/ui";
 import { useLocalization } from "cs2/l10n";
 import { BrandDataInfo, LocaleKeys } from "types";
 import styles from "./BrandPanel.module.scss";
-
-const activeSelectionBinding = bindValue<boolean>(
-  "selectedInfo",
-  "activeSelection"
-);
+import { Entity } from "cs2/bindings";
 
 export const BrandPanel = () => {
   const { translate } = useLocalization();
+  const activeSelectionBinding = bindValue<boolean>(
+    "selectedInfo",
+    "activeSelection"
+  );
   const sipActive = useValue(activeSelectionBinding);
 
   const CurrentBrandBinding = bindValue<string>(
@@ -27,21 +27,25 @@ export const BrandPanel = () => {
     "CurrentBrand",
     "Unknown"
   );
-
-  const SelectedEntityBinding = bindValue<string>(
+  const AllBrandsBinding = bindValue<BrandDataInfo[]>(
     mod.id,
-    "SelectedEntity",
-    "Unknown"
+    "BrandDataInfoArray"
   );
+
+  const SelectedEntityBinding = bindValue<Entity>(mod.id, "SelectedEntity");
   const CurrentBrandText = useValue(CurrentBrandBinding);
-  const SelectedEntityText = useValue(SelectedEntityBinding);
+
+  const SelectedEntity = useValue(SelectedEntityBinding);
+  if (SelectedEntity.index == -1) return null;
+
+  const visibleBindingValue = useValue(panelVisibleBinding);
 
   const [sipPanel, setSipPanel] = useState(false);
   const [heightFull, setHeightFull] = useState(0);
   const [heightScroll, setHeightScroll] = useState(0);
 
-  const SetBrand = (replaceBrand: string, entityId: string) =>
-    trigger(mod.id, "SetBrand", replaceBrand, entityId);
+  const SetBrand = (replaceBrand: string, entity: Entity) =>
+    trigger(mod.id, "SetBrand", replaceBrand, entity);
 
   useEffect(() => {
     const el = document.querySelector(
@@ -97,11 +101,10 @@ export const BrandPanel = () => {
     return () => observer.disconnect();
   }, []);
 
-  const visibleBindingValue = useValue(panelVisibleBinding);
-
   const visible = visibleBindingValue && sipPanel;
   if (!visible) return null;
 
+  const BrandsArray = AllBrandsBinding.value ?? [];
   const headerText = translate(LocaleKeys.PANEL_HEADER, "PANEL_HEADER");
   const SelectedEntityTitleText = translate(
     LocaleKeys.SELECTED_ENTITY,
@@ -112,14 +115,6 @@ export const BrandPanel = () => {
     LocaleKeys.CURRENT_BRAND,
     "CURRENT_BRAND"
   );
-  const AllBrandsBinding = bindValue<BrandDataInfo[]>(
-    mod.id,
-    "BrandDataInfoArray"
-  );
-
-  const BrandsArray = AllBrandsBinding.value ?? [];
-
-  if (SelectedEntityText == "-1:-1") return null;
 
   return (
     <div
@@ -157,7 +152,7 @@ export const BrandPanel = () => {
           <PanelSection>
             <PanelSectionRow
               left={SelectedEntityTitleText}
-              right={SelectedEntityText}
+              right={`${SelectedEntity.index}:${SelectedEntity.version}`}
             ></PanelSectionRow>
             <PanelSectionRow
               left={CurrentBrandTitleText}
@@ -170,14 +165,16 @@ export const BrandPanel = () => {
                 <div
                   key={key}
                   onClick={() => {
-                    SetBrand(brand.PrefabName, SelectedEntityText);
-                    console.log(brand.Icon);
-                    console.log(brand.Color1);
-                    console.log(brand.Color2);
-                    console.log(brand.Color3);
+                    SetBrand(brand.PrefabName, SelectedEntity);
                   }}
                 >
                   <PanelSectionRow
+                    tooltip={
+                      <img
+                        className={styles.BrandImageLarge}
+                        src={brand.Icon}
+                      ></img>
+                    }
                     className={`${
                       brand.Name === CurrentBrandText && styles.BrandCurrentRow
                     } ${styles.BrandRow}`}
