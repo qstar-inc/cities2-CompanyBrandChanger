@@ -3,15 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using Colossal.Reflection;
 using Colossal.UI.Binding;
-using Game.UI;
+using Game.UI.InGame;
 using Unity.Entities;
 using UnityEngine;
 
-namespace CompanyBrandChanger.Systems.UI
+namespace CompanyBrandChanger.Extensions
 {
-    public abstract partial class ExtendedUISystemBase : UISystemBase
+    public abstract partial class ExtendedInfoSectionBase : InfoSectionBase
     {
         private readonly List<Action> _updateCallbacks = new();
 

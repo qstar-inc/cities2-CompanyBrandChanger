@@ -1,51 +1,105 @@
 import {
-  stylePanel,
-  styleDefault,
-  styleSIP,
-  styleCloseButton,
-} from "styleBindings";
-import { panelVisibleBinding } from "./BrandPanelControl";
-import { useEffect, useState } from "react";
-import { bindValue, trigger, useValue } from "cs2/api";
-import mod from "mod.json";
-import { PanelSection, PanelSectionRow, Scrollable } from "cs2/ui";
-import { useLocalization } from "cs2/l10n";
-import { BrandDataInfo, LocaleKeys } from "types";
-import styles from "./BrandPanel.module.scss";
+    activeSelectionBinding, ClosePanel, maxPanelHeight, panelVisibleBinding, SetBrand,
+    SplitTextToDiv
+} from "bindings";
+import { useValue } from "cs2/api";
 import { Entity } from "cs2/bindings";
+import { useLocalization } from "cs2/l10n";
+import { PanelSection, PanelSectionRow, Portal, Scrollable } from "cs2/ui";
+import { FC, useEffect, useMemo, useState } from "react";
+import {
+    closeButtonClass, closeButtonImageClass, styleCloseButton, styleDefault, styleIcon, stylePanel,
+    styleSIP, styleTintedIcon, wrapperClass
+} from "styleBindings";
+import { BrandDataInfo, LocaleKeys } from "types";
 
-export const BrandPanel = () => {
+import styles from "./BrandPanel.module.scss";
+
+// import { ManagePanel } from "./ManagePanel";
+
+interface BrandPanelProps {
+  w_brand: string;
+  w_brandlist: BrandDataInfo[];
+  w_company: string;
+  w_entity: Entity;
+}
+
+export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
   const { translate } = useLocalization();
-  const activeSelectionBinding = bindValue<boolean>(
-    "selectedInfo",
-    "activeSelection"
-  );
   const sipActive = useValue(activeSelectionBinding);
-
-  const CurrentBrandBinding = bindValue<string>(
-    mod.id,
-    "CurrentBrand",
-    "Unknown"
-  );
-  const AllBrandsBinding = bindValue<BrandDataInfo[]>(
-    mod.id,
-    "BrandDataInfoArray"
-  );
-
-  const SelectedEntityBinding = bindValue<Entity>(mod.id, "SelectedEntity");
-  const CurrentBrandText = useValue(CurrentBrandBinding);
-
-  const SelectedEntity = useValue(SelectedEntityBinding);
-  if (SelectedEntity.index == -1) return null;
-
   const visibleBindingValue = useValue(panelVisibleBinding);
 
   const [sipPanel, setSipPanel] = useState(false);
   const [heightFull, setHeightFull] = useState(0);
   const [heightScroll, setHeightScroll] = useState(0);
 
-  const SetBrand = (replaceBrand: string, entity: Entity) =>
-    trigger(mod.id, "SetBrand", replaceBrand, entity);
+  const headerText = translate(LocaleKeys.NAME) ?? "NAME";
+  const SelectedEntityTitleText =
+    translate(LocaleKeys.SELECTED_ENTITY) ?? "SELECTED_ENTITY";
+  const CurrentBrandTitleText =
+    translate(LocaleKeys.CURRENT_BRAND) ?? "CURRENT_BRAND";
+  const CurrentCompanyTitleText =
+    translate(LocaleKeys.CURRENT_COMPANY) ?? "CURRENT_COMPANY";
+  const SupportedBrandsText =
+    translate(LocaleKeys.SUPPORTED_BRANDS)?.toUpperCase() ?? "SUPPORTED_BRANDS";
+  const SupportedBrandsTooltip =
+    translate(LocaleKeys.SUPPORTED_BRANDS_TOOLTIP) ??
+    "SUPPORTED_BRANDS_TOOLTIP";
+  const OtherBrandsText =
+    translate(LocaleKeys.OTHER_BRANDS)?.toUpperCase() ?? "OTHER_BRANDS";
+  const OtherBrandsTooltip =
+    translate(LocaleKeys.OTHER_BRANDS_TOOLTIP) ?? "OTHER_BRANDS_TOOLTIP";
+  const BrandGroupHoverText =
+    translate(LocaleKeys.BRAND_GROUP_HOVER) ?? "BRAND_GROUP_HOVER";
+
+  const [SupportedBrandsArray, OtherBrandsArray] = useMemo(() => {
+    const supported: BrandDataInfo[] = [];
+    const other: BrandDataInfo[] = [];
+
+    for (const brand of props.w_brandlist ?? []) {
+      if (
+        Array.isArray(brand.Companies) &&
+        brand.Companies.includes(props.w_company)
+      ) {
+        supported.push(brand);
+      } else {
+        other.push(brand);
+      }
+    }
+
+    return [supported, other];
+  }, [props.w_brandlist, props.w_company]);
+
+  const wrapperStyle = { maxHeight: `${heightFull}px` };
+
+  const contentScrollStyle = useMemo(
+    () => ({
+      maxHeight: `calc(${heightScroll}px - 6rem)`,
+    }),
+    [heightScroll]
+  );
+
+  const visible = useMemo(
+    () => visibleBindingValue && sipPanel,
+    [visibleBindingValue, sipPanel]
+  );
+
+  const calculateHeights = () => {
+    const wrapperElement = document.querySelector(
+      ".info-layout_BVk"
+    ) as HTMLElement | null;
+    const infoSectionElement = document.getElementsByClassName(
+      "info-row_QQ9"
+    )[0] as HTMLElement | undefined;
+
+    const newHeightFull = wrapperElement?.offsetHeight ?? 1600;
+    const heightSection = infoSectionElement?.offsetHeight ?? 0;
+    const newHeightScroll = newHeightFull - heightSection * 3 - 49;
+
+    maxPanelHeight.update(newHeightFull);
+    setHeightFull(newHeightFull);
+    setHeightScroll(newHeightScroll);
+  };
 
   useEffect(() => {
     const el = document.querySelector(
@@ -71,22 +125,6 @@ export const BrandPanel = () => {
   }, [sipActive]);
 
   useEffect(() => {
-    const calculateHeights = () => {
-      const wrapperElement = document.querySelector(
-        ".info-layout_BVk"
-      ) as HTMLElement | null;
-      const infoSectionElement = document.getElementsByClassName(
-        "info-row_QQ9"
-      )[0] as HTMLElement | undefined;
-
-      const newHeightFull = wrapperElement?.offsetHeight ?? 1600;
-      setHeightFull(newHeightFull);
-      const heightSection = infoSectionElement?.offsetHeight ?? 0;
-
-      const newHeightScroll = newHeightFull - heightSection * 2 - 49;
-      setHeightScroll(newHeightScroll);
-    };
-
     calculateHeights();
 
     const observer = new MutationObserver(() => {
@@ -101,128 +139,134 @@ export const BrandPanel = () => {
     return () => observer.disconnect();
   }, []);
 
-  const visible = visibleBindingValue && sipPanel;
-  if (!visible) return null;
+  if (props.w_entity.index === -1 || !visible) return null;
 
-  const BrandsArray = AllBrandsBinding.value ?? [];
-  const headerText = translate(LocaleKeys.PANEL_HEADER, "PANEL_HEADER");
-  const SelectedEntityTitleText = translate(
-    LocaleKeys.SELECTED_ENTITY,
-    "SELECTED_ENTITY"
-  );
+  const BrandSection = ({
+    BrandsText,
+    BrandsTooltip,
+    BrandsArrayX,
+  }: {
+    BrandsText: string;
+    BrandsTooltip: string;
+    BrandsArrayX: BrandDataInfo[];
+  }) => {
+    return (
+      <>
+        <PanelSection>
+          <PanelSectionRow
+            left={BrandsText}
+            right={BrandGroupHoverText}
+            tooltip={BrandsTooltip}
+          />
+          {Object.entries(BrandsArrayX).map(([key, brand]) => {
+            const isCurrent = brand.Name === props.w_brand;
+            const brandRowClass = `${isCurrent ? styles.BrandCurrentRow : ""} ${
+              styles.BrandRow
+            }`;
+            return (
+              <div
+                key={key}
+                onClick={() => {
+                  SetBrand(brand.PrefabName, props.w_entity);
+                }}
+              >
+                <PanelSectionRow
+                  className={brandRowClass}
+                  left={
+                    <>
+                      <img
+                        className={styles.BrandImage}
+                        src={`${brand.Icon}`}
+                      />
 
-  const CurrentBrandTitleText = translate(
-    LocaleKeys.CURRENT_BRAND,
-    "CURRENT_BRAND"
-  );
+                      {isCurrent && (
+                        <span className={styles.BrandCurrent}>[Current] </span>
+                      )}
+                      <span className={styles.BrandName}>{brand.Name}</span>
+                    </>
+                  }
+                  right={
+                    <>
+                      {[brand.Color1, brand.Color2, brand.Color3].map(
+                        (color, i) => (
+                          <div
+                            key={i}
+                            className={styles.BrandColorBox}
+                            style={{
+                              background: color.slice(0, -2) + "FF",
+                            }}
+                          />
+                        )
+                      )}
+                    </>
+                  }
+                />
+              </div>
+            );
+          })}
+        </PanelSection>
+      </>
+    );
+  };
 
   return (
-    <div
-      className={`${stylePanel.panel} ${styleSIP.selectedInfoPanel} ${styles.BrandChangerPanel}`}
-      id="starq-brandchanger-panel"
-      style={{
-        maxHeight: `${heightFull}px`,
-      }}
-    >
-      <div className={styleDefault.header}>
-        <div className={stylePanel.titleBar}>
-          <img
-            className={stylePanel.icon}
-            src="Media/Tools/Net Tool/Replace.svg"
-          />
-          <div className={styleDefault.title}>{headerText}</div>
-          <button
-            className={`${styleCloseButton.button} ${stylePanel.closeButton}`}
-            onClick={() => {
-              panelVisibleBinding.update(false);
-              trigger("audio.playSound", "close-menu", 1);
-            }}
-          >
-            <div
-              className={`tinted-icon_iKo icon_PhD`}
-              style={{
-                maskImage: "url(Media/Glyphs/Close.svg)",
-              }}
-            ></div>
-          </button>
-        </div>
-      </div>
-      <div className={styleDefault.content}>
-        <div>
-          <PanelSection>
-            <PanelSectionRow
-              left={SelectedEntityTitleText}
-              right={`${SelectedEntity.index}:${SelectedEntity.version}`}
-            ></PanelSectionRow>
-            <PanelSectionRow
-              left={CurrentBrandTitleText}
-              right={CurrentBrandText}
-            ></PanelSectionRow>
-          </PanelSection>
-          <PanelSection>
-            <Scrollable style={{ maxHeight: `calc(${heightScroll}px - 6rem)` }}>
-              {Object.entries(BrandsArray).map(([key, brand]) => (
+    <>
+      <Portal>
+        <div
+          id="starq-cbc-panel"
+          className={`${wrapperClass} ${styles.BrandChangerPanel}`}
+          style={wrapperStyle}
+        >
+          <div className={styleDefault.header}>
+            <div className={stylePanel.titleBar}>
+              <img
+                className={stylePanel.icon}
+                src="Media/Tools/Net Tool/Replace.svg"
+              />
+              <div className={styleDefault.title}>{headerText}</div>
+              <button className={closeButtonClass} onClick={() => ClosePanel()}>
                 <div
-                  key={key}
-                  onClick={() => {
-                    SetBrand(brand.PrefabName, SelectedEntity);
+                  className={closeButtonImageClass}
+                  style={{
+                    maskImage: "url(Media/Glyphs/Close.svg)",
                   }}
-                >
-                  <PanelSectionRow
-                    tooltip={
-                      <img
-                        className={styles.BrandImageLarge}
-                        src={brand.Icon}
-                      ></img>
-                    }
-                    className={`${
-                      brand.Name === CurrentBrandText && styles.BrandCurrentRow
-                    } ${styles.BrandRow}`}
-                    left={
-                      <>
-                        {
-                          <img
-                            className={styles.BrandImage}
-                            src={brand.Icon}
-                          ></img>
-                        }{" "}
-                        {brand.Name === CurrentBrandText && (
-                          <span className={styles.BrandCurrent}>
-                            [Current]{" "}
-                          </span>
-                        )}
-                        <span className={styles.BrandName}>{brand.Name}</span>
-                      </>
-                    }
-                    right={
-                      <>
-                        <div
-                          className={styles.BrandColorBox}
-                          style={{
-                            background: brand.Color1.slice(0, -2) + "FF",
-                          }}
-                        ></div>
-                        <div
-                          className={styles.BrandColorBox}
-                          style={{
-                            background: brand.Color2.slice(0, -2) + "FF",
-                          }}
-                        ></div>
-                        <div
-                          className={styles.BrandColorBox}
-                          style={{
-                            background: brand.Color3.slice(0, -2) + "FF",
-                          }}
-                        ></div>
-                      </>
-                    }
-                  ></PanelSectionRow>
-                </div>
-              ))}
-            </Scrollable>
-          </PanelSection>
+                ></div>
+              </button>
+            </div>
+          </div>
+          <div className={styleDefault.content}>
+            <PanelSection>
+              <PanelSectionRow
+                left={SelectedEntityTitleText}
+                right={`${props.w_entity.index}:${props.w_entity.version}`}
+              />
+              <PanelSectionRow
+                left={CurrentBrandTitleText}
+                right={props.w_brand}
+              />
+              <PanelSectionRow
+                left={CurrentCompanyTitleText}
+                right={props.w_company}
+              />
+            </PanelSection>
+            <PanelSection>
+              <Scrollable style={contentScrollStyle}>
+                <BrandSection
+                  BrandsText={SupportedBrandsText}
+                  BrandsTooltip={SupportedBrandsTooltip}
+                  BrandsArrayX={SupportedBrandsArray}
+                />
+                <BrandSection
+                  BrandsText={OtherBrandsText}
+                  BrandsTooltip={OtherBrandsTooltip}
+                  BrandsArrayX={OtherBrandsArray}
+                />
+              </Scrollable>
+            </PanelSection>
+          </div>
         </div>
-      </div>
-    </div>
+      </Portal>
+      {/* <ManagePanel /> */}
+    </>
   );
 };

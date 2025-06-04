@@ -6,6 +6,7 @@ $boxSize: 15rem;
   left: 420rem;
   bottom: 6rem;
   z-index: calc(var(--tooltipIndex) - 1);
+  overflow: hidden;
 }
 
 .BrandColorBox {
@@ -38,9 +39,27 @@ $boxSize: 15rem;
 .BrandImage {
   width: 20rem;
   height: 20rem;
+  margin-right: 4rem;
+  border-radius: 100rem;
 }
 
-.BrandImageLarge {
-  width: 60rem;
-  height: 60rem;
+.TooltipMarginBottom {
+  margin-bottom: 5rem;
+}
+
+.ToolWhite img {
+  filter: brightness(0) invert(1) !important;
+}
+
+.ToolWhite img:hover {
+  filter: saturate(1) brightness(0.85) invert(1) !important;
+}
+
+.BrandChangerManage {
+  position: absolute;
+  top: calc(16rem + var(--floatingToggleSize));
+  left: 840rem;
+  bottom: 6rem;
+  z-index: calc(var(--tooltipIndex) - 1);
+  overflow: hidden;
 }

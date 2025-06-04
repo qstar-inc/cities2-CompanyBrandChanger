@@ -1,5 +1,5 @@
-﻿using Colossal.IO.AssetDatabase;
-using Colossal.Logging;
+﻿using Colossal.Logging;
+using CompanyBrandChanger.Extensions;
 using CompanyBrandChanger.Systems;
 using Game;
 using Game.Modding;
@@ -10,44 +10,22 @@ namespace CompanyBrandChanger
 {
     public class Mod : IMod
     {
-        public static string Name = "Company Brand Changer";
-        public static string Id = "CompanyBrandChanger";
+        public static string Id = nameof(CompanyBrandChanger);
         public static ILog log = LogManager
             .GetLogger($"{nameof(CompanyBrandChanger)}")
             .SetShowsErrorsInUI(false);
 
-        //private Setting m_Setting;
-
         public void OnLoad(UpdateSystem updateSystem)
         {
-            log.Info(nameof(OnLoad));
-
-            if (GameManager.instance.modManager.TryGetExecutableAsset(this, out var asset))
-                log.Info($"Current mod asset at {asset.path}");
-
-            //m_Setting = new Setting(this);
-            //m_Setting.RegisterInOptionsUI();
-            //GameManager.instance.localizationManager.AddSource("en-US", new LocaleEN(m_Setting));
-
-            //AssetDatabase.global.LoadSettings(
-            //    nameof(CompanyBrandChanger),
-            //    m_Setting,
-            //    new Setting(this)
-            //);
+            foreach (var item in new LocaleHelper($"{Id}.Locale.json").GetAvailableLanguages())
+            {
+                GameManager.instance.localizationManager.AddSource(item.LocaleId, item);
+            }
 
             World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<BrandDataRetriever>();
-            updateSystem.UpdateAfter<SIPCompanySectionBrand>(SystemUpdatePhase.UIUpdate);
-            updateSystem.UpdateAfter<Panel>(SystemUpdatePhase.UIUpdate);
+            updateSystem.UpdateAt<SIPCompanySectionBrand>(SystemUpdatePhase.UIUpdate);
         }
 
-        public void OnDispose()
-        {
-            log.Info(nameof(OnDispose));
-            //if (m_Setting != null)
-            //{
-            //    m_Setting.UnregisterInOptionsUI();
-            //    m_Setting = null;
-            //}
-        }
+        public void OnDispose() { }
     }
 }

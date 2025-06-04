@@ -1,0 +1,14 @@
+{
+  "CompanyBrandChanger.NAME": "Company Brand Changer",
+  "CompanyBrandChanger.SIP[RandomizeTooltip]": "Randomize the building's seed to change billboard sizes/positions, trees, props and colors. Randomizing is irreversible. This does not change the company itself.",
+  "CompanyBrandChanger.SIP[Tooltip]": "Changing brand is completely visual only.\r\nIt does not affect simulation and does not change the company or the resources used/manufactured.",
+  "CompanyBrandChanger.UI_PANEL[CurrentBrand]": "Current Brand",
+  "CompanyBrandChanger.UI_PANEL[CurrentCompany]": "Current Company",
+  "CompanyBrandChanger.UI_PANEL[OtherBrands]": "Other Brands",
+  "CompanyBrandChanger.UI_PANEL[OtherBrandsTooltip]": "The following brands are from companies that's not the same as the current company.\r\nSelecting any of these will not have any effect on the business/simulation either.",
+  "CompanyBrandChanger.UI_PANEL[SelectedEntity]": "Selected Entity",
+  "CompanyBrandChanger.UI_PANEL[SupportedBrands]": "Supported Brands",
+  "CompanyBrandChanger.UI_PANEL[SupportedBrandsTooltip]": "The following brands supports the current company.",
+  "CompanyBrandChanger.UI_PANEL[BrandGroupHover]": "Hover for more info",
+  "CompanyBrandChanger.MANAGE_PANEL[Header]": "Manage Brands"
+}
