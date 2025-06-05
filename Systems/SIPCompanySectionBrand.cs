@@ -150,8 +150,8 @@ namespace CompanyBrandChanger.Systems
             {
                 if (EntityManager.TryGetComponent(entity, out PseudoRandomSeed pseudoRandomSeed))
                 {
-                    Unity.Mathematics.Random random = new();
-                    ushort randomUShort = (ushort)random.NextInt(0, 65536);
+                    System.Random random = new();
+                    ushort randomUShort = (ushort)random.Next(0, 65536);
                     pseudoRandomSeed.m_Seed = randomUShort;
 
                     EntityManager.AddComponentData(entity, pseudoRandomSeed);
