@@ -23,8 +23,10 @@ namespace CompanyBrandChanger.Systems
 
     public partial class BrandDataRetriever : GameSystemBase
     {
+#nullable disable
         public PrefabSystem prefabSystem;
         public NameSystem nameSystem;
+#nullable enable
         public EntityQuery brandQuery;
         public int prevEntityCount;
         public static readonly List<BrandDataInfo> brandDataInfos = new();

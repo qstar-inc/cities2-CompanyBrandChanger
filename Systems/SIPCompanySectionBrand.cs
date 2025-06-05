@@ -9,7 +9,9 @@ using Game.Buildings;
 using Game.Common;
 using Game.Companies;
 using Game.UI;
+using Game.UI.InGame;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace CompanyBrandChanger.Systems
 {
@@ -21,12 +23,14 @@ namespace CompanyBrandChanger.Systems
             get { return "SIPCompanySectionBrand"; }
         }
 
-        public static Entity SelectedEntity { get; set; }
+# nullable disable
         public static string CurrentBrandName { get; set; }
         public static string CurrentCompanyName { get; set; }
-
         private NameSystem nameSystem;
 
+#nullable enable
+
+        private Entity companyEntity;
         private bool isBrandDataSet;
 
         protected override void OnCreate()
@@ -42,25 +46,10 @@ namespace CompanyBrandChanger.Systems
             Enabled = false;
         }
 
-        protected override void OnGameLoadingComplete(Purpose purpose, GameMode mode)
-        {
-            base.OnGameLoadingComplete(purpose, mode);
-            if (mode == GameMode.Game)
-            {
-                Enabled = true;
-                return;
-            }
-            Enabled = false;
-            return;
-        }
-
         protected override void OnUpdate()
         {
             base.OnUpdate();
-            if (selectedEntity == Entity.Null)
-            {
-                return;
-            }
+
             visible = Visible();
             if (!isBrandDataSet || BrandDataRetriever.hasNewData)
             {
@@ -71,9 +60,6 @@ namespace CompanyBrandChanger.Systems
 
         public override void OnWriteProperties(IJsonWriter writer)
         {
-            writer.PropertyName("w_entity");
-            writer.Write(SelectedEntity);
-
             writer.PropertyName("w_brand");
             writer.Write(CurrentBrandName);
 
@@ -93,34 +79,27 @@ namespace CompanyBrandChanger.Systems
 
         private bool Visible()
         {
-            if (
-                EntityManager.TryGetBuffer<Renter>(
-                    selectedEntity,
-                    true,
-                    out DynamicBuffer<Renter> renters
-                )
-            )
-            {
-                for (int i = 0; i < renters.Length; i++)
-                {
-                    var renter = renters[i];
-                    Entity renterEntity = renter.m_Renter;
+            bool isVisible = CompanyUIUtils.HasCompany(
+                EntityManager,
+                selectedEntity,
+                selectedPrefab,
+                out companyEntity
+            );
 
-                    if (EntityManager.TryGetComponent(renterEntity, out CompanyData companyData))
-                    {
-                        if (companyData.m_Brand.Equals(Entity.Null))
-                            continue;
-                        SelectedEntity = selectedEntity;
-                        CurrentBrandName = nameSystem.GetRenderedLabelName(companyData.m_Brand);
-                        CurrentCompanyName = nameSystem
-                            .GetRenderedLabelName(renterEntity)
-                            .Replace("Assets.NAME[", "")
-                            .Replace("]", "");
-                        return true;
-                    }
-                }
+            if (!isVisible)
+                return false;
+
+            if (EntityManager.TryGetComponent(companyEntity, out CompanyData companyData))
+            {
+                if (companyData.m_Brand.Equals(Entity.Null))
+                    return false;
+                CurrentBrandName = nameSystem.GetRenderedLabelName(companyData.m_Brand);
+                CurrentCompanyName = nameSystem
+                    .GetRenderedLabelName(companyEntity)
+                    .Replace("Assets.NAME[", "")
+                    .Replace("]", "");
+                return true;
             }
-            SelectedEntity = Entity.Null;
             return false;
         }
 
@@ -153,6 +132,7 @@ namespace CompanyBrandChanger.Systems
 
                             EntityManager.SetComponentData(renterEntity, companyData);
                             EntityManager.AddComponent<Updated>(entity);
+                            m_InfoUISystem.SetDirty();
                             break;
                         }
                     }
@@ -170,14 +150,13 @@ namespace CompanyBrandChanger.Systems
             {
                 if (EntityManager.TryGetComponent(entity, out PseudoRandomSeed pseudoRandomSeed))
                 {
-                    Random random = new();
-                    ushort randomUShort = (ushort)random.Next(0, 65536);
+                    Unity.Mathematics.Random random = new();
+                    ushort randomUShort = (ushort)random.NextInt(0, 65536);
                     pseudoRandomSeed.m_Seed = randomUShort;
 
                     EntityManager.AddComponentData(entity, pseudoRandomSeed);
                     EntityManager.AddComponent<Updated>(entity);
-                    //m_Dirty = true;
-                    //m_InfoUISystem.SetDirty();
+                    m_InfoUISystem.SetDirty();
                 }
             }
             catch (Exception ex)

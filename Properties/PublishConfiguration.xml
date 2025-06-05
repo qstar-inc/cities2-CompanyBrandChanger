@@ -1,35 +1,41 @@
 ﻿<Publish>
-	<!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
-	<ModId Value="" />
-	<!--Name of the mod to display to players-->
-	<DisplayName Value="CompanyBrandChanger" />
-	<!--Short description of the mod-->
-	<ShortDescription Value="This is a short description" />
-	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
-	<!--LongDescription Value="This is a long description" /-->
+	<ModId Value="112283" />
+	<DisplayName Value="Company Brand Changer" />
+	<ShortDescription Value="Change the brands assigned to each buildings" />
 	<LongDescription>
-This is a long description
+# Company Brand Changer
+Company Brand Changer is a purely cosmetic mod that allows you to change the visual brand of any building in your city that currently houses a company.
+With just a few clicks, swap out logos, signs, and branding styles on commercial, industrial or office buildings to better fit to your vision.
+
+Note: This mod does not affect the building's underlying company or function.
+For example, an "Office_Bank" producing "Financial" will continue to do so, even if an "Electronics" brand is assigned. Only the visual branding and selected building colors updates — the simulation remains unchanged.
+
+Features:
+* **Change Building Brands**: Access any building with a company, and instantly switch its brand.
+* **Building Seed Randomization**: A bonus feature that let's you randomize the building's seed — reshuffling the colors and props like trees, fences, and billboards.
+
+Recommended Brand Packs:
+* [Real World Brand: Adobe](https://mods.paradoxplaza.com/mods/83168/Windows)
+* [Real World Brand: Apple](https://mods.paradoxplaza.com/mods/86423/Windows)
+* [Real World Brand: Discord](https://mods.paradoxplaza.com/mods/84186/Windows)
+* [Real World Brand: Paradox Interactive](https://mods.paradoxplaza.com/mods/80939/Windows)
+* [Real World Brand: Petrochemicals](https://mods.paradoxplaza.com/mods/81625/Windows)
 	</LongDescription>
-	<!--Thumbnail-->
 	<Thumbnail Value="Properties/Thumbnail.png" />
-	<!--Screenshot, can be set multiple times-->
-	<Screenshot Value="" />
-	<!--Tag, can be set multiple times-->
-	<Tag Value="" />
-	<!--Link to the forum post where the mod can be discussed-->
+	<Screenshot Value="Properties/Screenshot_01.jpg" />
+	<Screenshot Value="Properties/Screenshot_02.jpg" />
+	<Screenshot Value="Properties/Screenshot_03.jpg" />
+	<Screenshot Value="Properties/Screenshot_04.jpg" />
+	<Screenshot Value="Properties/Screenshot_05.jpg" />
+	<Tag Value="Code Mod" />
 	<ForumLink Value="" />
-	<!--Version of the mod-->
-	<ModVersion Value="1.0" />
-	<!--Recommended version of the base game to use the mod-->
-	<GameVersion Value="1.0.*" />
-	<!--Dependency for the mod, can be set multiple times-->
+	<ModVersion Value="1.0.0" />
+	<GameVersion Value="1.2.*" />
 	<Dependency Id="" />
-	<!--Required DLC, can be set multiple times. Supported values are "Landmark Buildings", "San Fransisco Set", "Beach Properties", "Urban Promenades", "Modern Architecture"-->
 	<RequiredDLC Value="" />
-	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
-	<ChangeLog Value="" />
-	<!--<ChangeLog>
-	</ChangeLog>-->
-	<!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "x", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
-	<ExternalLink Type="" Url="" />
+	<ChangeLog>
+- Initial Release
+	</ChangeLog>
+	<ExternalLink Type="buymeacoffee" Url="https://buymeacoffee.com/starq" />
+	<ExternalLink Type="github" Url="https://github.com/qstar-inc/cities2-CompanyBrandChanger/" />
 </Publish>

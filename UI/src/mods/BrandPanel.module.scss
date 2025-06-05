@@ -3,10 +3,28 @@ $boxSize: 15rem;
 .BrandChangerPanel {
   position: absolute;
   top: calc(16rem + var(--floatingToggleSize));
-  left: 420rem;
   bottom: 6rem;
   z-index: calc(var(--tooltipIndex) - 1);
   overflow: hidden;
+  transform: scale(0.9);
+  opacity: 0.5;
+}
+
+.BrandChangerAnimate {
+  animation: animate 0.25s ease-in forwards;
+  transform-origin: center center;
+  transition-property: all;
+}
+
+@keyframes animate {
+  from {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .BrandColorBox {
@@ -53,13 +71,4 @@ $boxSize: 15rem;
 
 .ToolWhite img:hover {
   filter: saturate(1) brightness(0.85) invert(1) !important;
-}
-
-.BrandChangerManage {
-  position: absolute;
-  top: calc(16rem + var(--floatingToggleSize));
-  left: 840rem;
-  bottom: 6rem;
-  z-index: calc(var(--tooltipIndex) - 1);
-  overflow: hidden;
 }

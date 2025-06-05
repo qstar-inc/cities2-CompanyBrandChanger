@@ -1,21 +1,20 @@
 import {
-    activeSelectionBinding, ClosePanel, maxPanelHeight, panelVisibleBinding, SetBrand,
-    SplitTextToDiv
+    ClosePanel, panelVisibleBinding, selectedEntity, SetBrand, SizeProvider, useUniformSizeProvider,
+    VanillaVirtualList
 } from "bindings";
 import { useValue } from "cs2/api";
 import { Entity } from "cs2/bindings";
+import { AutoNavigationScope, FocusActivation } from "cs2/input";
 import { useLocalization } from "cs2/l10n";
-import { PanelSection, PanelSectionRow, Portal, Scrollable } from "cs2/ui";
-import { FC, useEffect, useMemo, useState } from "react";
+import { PanelSection, PanelSectionRow, Portal } from "cs2/ui";
+import { useCssLength } from "cs2/utils";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
-    closeButtonClass, closeButtonImageClass, styleCloseButton, styleDefault, styleIcon, stylePanel,
-    styleSIP, styleTintedIcon, wrapperClass
+    closeButtonClass, closeButtonImageClass, styleDefault, stylePanel, wrapperClass
 } from "styleBindings";
 import { BrandDataInfo, LocaleKeys } from "types";
 
 import styles from "./BrandPanel.module.scss";
-
-// import { ManagePanel } from "./ManagePanel";
 
 interface BrandPanelProps {
   w_brand: string;
@@ -24,14 +23,123 @@ interface BrandPanelProps {
   w_entity: Entity;
 }
 
+const BrandSection = ({
+  BrandsText,
+  BrandsTooltip,
+  BrandsArrayX,
+  BrandGroupHoverText,
+  SelectedBrand,
+  Entity,
+  MaxHeight,
+  SizeProvider,
+}: {
+  BrandsText: string;
+  BrandsTooltip: string;
+  BrandsArrayX: BrandDataInfo[];
+  BrandGroupHoverText: string;
+  SelectedBrand: string;
+  Entity: Entity;
+  MaxHeight: number;
+  SizeProvider: SizeProvider;
+}) => {
+  const RenderItem = useCallback(
+    (itemIndex: number, indexInRange: number) => {
+      if (itemIndex < 0 || itemIndex >= BrandsArrayX.length) return null;
+      const brand = BrandsArrayX[itemIndex];
+      const isCurrent = brand.Name === SelectedBrand;
+      const brandRowClass = `${isCurrent ? styles.BrandCurrentRow : ""} ${
+        styles.BrandRow
+      }`;
+      return (
+        <RenderRow
+          brand={brand}
+          entity={Entity}
+          isCurrent={isCurrent}
+          brandRowClass={brandRowClass}
+        />
+      );
+    },
+    [SelectedBrand, Entity, BrandsArrayX]
+  );
+
+  return (
+    <>
+      <PanelSection>
+        <PanelSectionRow
+          left={BrandsText}
+          right={BrandGroupHoverText}
+          tooltip={BrandsTooltip}
+        />
+        <AutoNavigationScope activation={FocusActivation.AnyChildren}>
+          <VanillaVirtualList
+            direction="vertical"
+            sizeProvider={SizeProvider}
+            renderItem={RenderItem}
+            style={{
+              maxHeight: `${Math.min(30 * BrandsArrayX.length, MaxHeight)}rem`,
+            }}
+            smooth
+          />
+        </AutoNavigationScope>
+      </PanelSection>
+    </>
+  );
+};
+
+export const RenderRow = ({
+  entity,
+  isCurrent,
+  brand,
+  brandRowClass,
+}: {
+  entity: Entity;
+  brand: BrandDataInfo;
+  isCurrent: boolean;
+  brandRowClass: string;
+}) => {
+  return (
+    <div
+      onClick={() => {
+        SetBrand(brand.PrefabName, entity);
+      }}
+    >
+      <PanelSectionRow
+        className={brandRowClass}
+        left={
+          <>
+            <img className={styles.BrandImage} src={`${brand.Icon}`} />
+
+            {isCurrent && (
+              <span className={styles.BrandCurrent}>[Current] </span>
+            )}
+            <span className={styles.BrandName}>{brand.Name}</span>
+          </>
+        }
+        right={
+          <>
+            {[brand.Color1, brand.Color2, brand.Color3].map((color, i) => (
+              <div
+                key={i}
+                className={styles.BrandColorBox}
+                style={{
+                  background: color.slice(0, -2) + "FF",
+                }}
+              />
+            ))}
+          </>
+        }
+      />
+    </div>
+  );
+};
+
 export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
   const { translate } = useLocalization();
-  const sipActive = useValue(activeSelectionBinding);
   const visibleBindingValue = useValue(panelVisibleBinding);
+  const sE = useValue(selectedEntity);
 
-  const [sipPanel, setSipPanel] = useState(false);
   const [heightFull, setHeightFull] = useState(0);
-  const [heightScroll, setHeightScroll] = useState(0);
+  const [panelLeft, setPanelLeft] = useState(0);
 
   const headerText = translate(LocaleKeys.NAME) ?? "NAME";
   const SelectedEntityTitleText =
@@ -70,63 +178,37 @@ export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
     return [supported, other];
   }, [props.w_brandlist, props.w_company]);
 
-  const wrapperStyle = { maxHeight: `${heightFull}px` };
-
-  const contentScrollStyle = useMemo(
+  const wrapperStyle = useMemo(
     () => ({
-      maxHeight: `calc(${heightScroll}px - 6rem)`,
+      maxHeight: `${heightFull}px`,
+      left: `calc(${panelLeft}px + 20rem)`,
     }),
-    [heightScroll]
+    [panelLeft, heightFull]
   );
 
-  const visible = useMemo(
-    () => visibleBindingValue && sipPanel,
-    [visibleBindingValue, sipPanel]
-  );
+  const visible = useMemo(() => visibleBindingValue, [visibleBindingValue]);
 
   const calculateHeights = () => {
     const wrapperElement = document.querySelector(
       ".info-layout_BVk"
     ) as HTMLElement | null;
-    const infoSectionElement = document.getElementsByClassName(
-      "info-row_QQ9"
-    )[0] as HTMLElement | undefined;
+    const sipElement = document.querySelector(
+      ".selected-info-panel_gG8"
+    ) as HTMLElement | null;
 
     const newHeightFull = wrapperElement?.offsetHeight ?? 1600;
-    const heightSection = infoSectionElement?.offsetHeight ?? 0;
-    const newHeightScroll = newHeightFull - heightSection * 3 - 49;
-
-    maxPanelHeight.update(newHeightFull);
+    if (sipElement?.offsetWidth == 0) {
+      return;
+    } else {
+      const newPanelLeft =
+        (sipElement?.offsetLeft ?? 6) + (sipElement?.offsetWidth ?? 300);
+      setPanelLeft(newPanelLeft);
+    }
     setHeightFull(newHeightFull);
-    setHeightScroll(newHeightScroll);
   };
 
   useEffect(() => {
-    const el = document.querySelector(
-      ".row_OqM.container_Ty2.selected-info-panel_iIe"
-    );
-    const observer = new MutationObserver(() => {
-      setSipPanel(!!el);
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-    setSipPanel(!!el);
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!sipActive && panelVisibleBinding.value) {
-      panelVisibleBinding.update(false);
-    }
-  }, [sipActive]);
-
-  useEffect(() => {
     calculateHeights();
-
     const observer = new MutationObserver(() => {
       calculateHeights();
     });
@@ -139,82 +221,27 @@ export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
     return () => observer.disconnect();
   }, []);
 
-  if (props.w_entity.index === -1 || !visible) return null;
+  const sizeProviderSupported = useUniformSizeProvider(
+    useCssLength("30rem"),
+    SupportedBrandsArray.length,
+    5
+  );
+  const sizeProviderOther = useUniformSizeProvider(
+    useCssLength("30rem"),
+    OtherBrandsArray.length,
+    5
+  );
 
-  const BrandSection = ({
-    BrandsText,
-    BrandsTooltip,
-    BrandsArrayX,
-  }: {
-    BrandsText: string;
-    BrandsTooltip: string;
-    BrandsArrayX: BrandDataInfo[];
-  }) => {
-    return (
-      <>
-        <PanelSection>
-          <PanelSectionRow
-            left={BrandsText}
-            right={BrandGroupHoverText}
-            tooltip={BrandsTooltip}
-          />
-          {Object.entries(BrandsArrayX).map(([key, brand]) => {
-            const isCurrent = brand.Name === props.w_brand;
-            const brandRowClass = `${isCurrent ? styles.BrandCurrentRow : ""} ${
-              styles.BrandRow
-            }`;
-            return (
-              <div
-                key={key}
-                onClick={() => {
-                  SetBrand(brand.PrefabName, props.w_entity);
-                }}
-              >
-                <PanelSectionRow
-                  className={brandRowClass}
-                  left={
-                    <>
-                      <img
-                        className={styles.BrandImage}
-                        src={`${brand.Icon}`}
-                      />
+  if (sE.index === 0 || !visible) return null;
 
-                      {isCurrent && (
-                        <span className={styles.BrandCurrent}>[Current] </span>
-                      )}
-                      <span className={styles.BrandName}>{brand.Name}</span>
-                    </>
-                  }
-                  right={
-                    <>
-                      {[brand.Color1, brand.Color2, brand.Color3].map(
-                        (color, i) => (
-                          <div
-                            key={i}
-                            className={styles.BrandColorBox}
-                            style={{
-                              background: color.slice(0, -2) + "FF",
-                            }}
-                          />
-                        )
-                      )}
-                    </>
-                  }
-                />
-              </div>
-            );
-          })}
-        </PanelSection>
-      </>
-    );
-  };
+  const animateClass = visible ? `${styles.BrandChangerAnimate}` : ``;
 
   return (
     <>
       <Portal>
         <div
           id="starq-cbc-panel"
-          className={`${wrapperClass} ${styles.BrandChangerPanel}`}
+          className={`${wrapperClass} ${styles.BrandChangerPanel} ${animateClass}`}
           style={wrapperStyle}
         >
           <div className={styleDefault.header}>
@@ -250,23 +277,30 @@ export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
               />
             </PanelSection>
             <PanelSection>
-              <Scrollable style={contentScrollStyle}>
-                <BrandSection
-                  BrandsText={SupportedBrandsText}
-                  BrandsTooltip={SupportedBrandsTooltip}
-                  BrandsArrayX={SupportedBrandsArray}
-                />
-                <BrandSection
-                  BrandsText={OtherBrandsText}
-                  BrandsTooltip={OtherBrandsTooltip}
-                  BrandsArrayX={OtherBrandsArray}
-                />
-              </Scrollable>
+              <BrandSection
+                BrandsText={SupportedBrandsText}
+                BrandsTooltip={SupportedBrandsTooltip}
+                BrandsArrayX={SupportedBrandsArray}
+                BrandGroupHoverText={BrandGroupHoverText}
+                SelectedBrand={props.w_brand}
+                Entity={props.w_entity}
+                MaxHeight={210}
+                SizeProvider={sizeProviderSupported}
+              />
+              <BrandSection
+                BrandsText={OtherBrandsText}
+                BrandsTooltip={OtherBrandsTooltip}
+                BrandsArrayX={OtherBrandsArray}
+                BrandGroupHoverText={BrandGroupHoverText}
+                SelectedBrand={props.w_brand}
+                Entity={props.w_entity}
+                MaxHeight={650 - Math.min(SupportedBrandsArray.length, 7) * 30}
+                SizeProvider={sizeProviderOther}
+              />
             </PanelSection>
           </div>
         </div>
       </Portal>
-      {/* <ManagePanel /> */}
     </>
   );
 };

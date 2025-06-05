@@ -1,9 +1,9 @@
 import {
-    panelTrigger, panelVisibleBinding, RandomizeStyle, SplitTextToDiv, ToolButton
+    panelTrigger, panelVisibleBinding, RandomizeStyle, selectedEntity, SplitTextToDiv, ToolButton
 } from "bindings";
 import { useValue } from "cs2/api";
-import { Entity, SelectedInfoSectionBase } from "cs2/bindings";
-import { ActiveFocusDiv, FOCUS_AUTO, FocusDisabled, PassiveFocusDiv } from "cs2/input";
+import { SelectedInfoSectionBase } from "cs2/bindings";
+import { FOCUS_AUTO, FocusDisabled } from "cs2/input";
 import { useLocalization } from "cs2/l10n";
 import { FOCUS_DISABLED, PanelSection, PanelSectionRow } from "cs2/ui";
 import { BrandDataInfo, LocaleKeys } from "types";
@@ -15,7 +15,6 @@ export interface CompanyBrandSection extends SelectedInfoSectionBase {
   w_brand: string;
   w_brandlist: BrandDataInfo[];
   w_company: string;
-  w_entity: Entity;
 }
 
 export const CompanyBrandChangerSystem = (componentList: any): any => {
@@ -25,9 +24,9 @@ export const CompanyBrandChangerSystem = (componentList: any): any => {
     const { translate } = useLocalization();
 
     const isPanelOpen = useValue(panelVisibleBinding);
+    const selectedEntityVal = useValue(selectedEntity);
 
     const tooltipText = translate(LocaleKeys.TOOLTIP) ?? "TOOLTIP";
-    // const tooltipText2 = translate(LocaleKeys.TOOLTIP2) ?? "TOOLTIP2";
     const modNameText = translate(LocaleKeys.NAME) ?? "NAME";
     const tooltipRandomizeButton =
       translate(LocaleKeys.RANDOMIZE_TOOLTIP) ?? "RANDOMIZE_TOOLTIP";
@@ -38,7 +37,6 @@ export const CompanyBrandChangerSystem = (componentList: any): any => {
           <PanelSectionRow
             uppercase={true}
             disableFocus={true}
-            // subRow={false}
             left={modNameText}
             right={
               <>
@@ -51,7 +49,7 @@ export const CompanyBrandChangerSystem = (componentList: any): any => {
                     className={styles.ToolWhite}
                     src="Media/Glyphs/Dice.svg"
                     onSelect={() => {
-                      RandomizeStyle(e.w_entity);
+                      RandomizeStyle(selectedEntityVal);
                     }}
                   />
                   <ToolButton
@@ -68,10 +66,11 @@ export const CompanyBrandChangerSystem = (componentList: any): any => {
           />
         </PanelSection>
         <BrandPanel
+          key={selectedEntityVal.index}
           w_brand={e.w_brand}
           w_brandlist={e.w_brandlist}
           w_company={e.w_company}
-          w_entity={e.w_entity}
+          w_entity={selectedEntityVal}
         />
       </>
     );

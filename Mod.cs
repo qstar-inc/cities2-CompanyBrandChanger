@@ -23,7 +23,7 @@ namespace CompanyBrandChanger
             }
 
             World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<BrandDataRetriever>();
-            updateSystem.UpdateAt<SIPCompanySectionBrand>(SystemUpdatePhase.UIUpdate);
+            updateSystem.UpdateAfter<SIPCompanySectionBrand>(SystemUpdatePhase.UIUpdate);
         }
 
         public void OnDispose() { }

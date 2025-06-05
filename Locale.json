@@ -9,6 +9,5 @@
   "CompanyBrandChanger.UI_PANEL[SelectedEntity]": "Selected Entity",
   "CompanyBrandChanger.UI_PANEL[SupportedBrands]": "Supported Brands",
   "CompanyBrandChanger.UI_PANEL[SupportedBrandsTooltip]": "The following brands supports the current company.",
-  "CompanyBrandChanger.UI_PANEL[BrandGroupHover]": "Hover for more info",
-  "CompanyBrandChanger.MANAGE_PANEL[Header]": "Manage Brands"
+  "CompanyBrandChanger.UI_PANEL[BrandGroupHover]": "[?]"
 }
