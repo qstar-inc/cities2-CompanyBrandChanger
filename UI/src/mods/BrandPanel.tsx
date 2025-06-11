@@ -1,6 +1,11 @@
 import {
-    ClosePanel, panelVisibleBinding, selectedEntity, SetBrand, SizeProvider, useUniformSizeProvider,
-    VanillaVirtualList
+  ClosePanel,
+  panelVisibleBinding,
+  selectedEntity,
+  SetBrand,
+  SizeProvider,
+  useUniformSizeProvider,
+  VanillaVirtualList,
 } from "bindings";
 import { useValue } from "cs2/api";
 import { Entity } from "cs2/bindings";
@@ -10,7 +15,11 @@ import { PanelSection, PanelSectionRow, Portal } from "cs2/ui";
 import { useCssLength } from "cs2/utils";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
-    closeButtonClass, closeButtonImageClass, styleDefault, stylePanel, wrapperClass
+  closeButtonClass,
+  closeButtonImageClass,
+  styleDefault,
+  stylePanel,
+  wrapperClass,
 } from "styleBindings";
 import { BrandDataInfo, LocaleKeys } from "types";
 
@@ -66,7 +75,7 @@ const BrandSection = ({
     <>
       <PanelSection>
         <PanelSectionRow
-          left={BrandsText}
+          left={`${BrandsText} (${BrandsArrayX.length})`}
           right={BrandGroupHoverText}
           tooltip={BrandsTooltip}
         />
@@ -263,10 +272,10 @@ export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
           </div>
           <div className={styleDefault.content}>
             <PanelSection>
-              <PanelSectionRow
+              {/* <PanelSectionRow
                 left={SelectedEntityTitleText}
                 right={`${props.w_entity.index}:${props.w_entity.version}`}
-              />
+              /> */}
               <PanelSectionRow
                 left={CurrentBrandTitleText}
                 right={props.w_brand}

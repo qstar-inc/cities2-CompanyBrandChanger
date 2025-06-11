@@ -11,7 +11,7 @@ import { BrandDataInfo, LocaleKeys } from "types";
 import { BrandPanel } from "./BrandPanel";
 import styles from "./BrandPanel.module.scss";
 
-export interface CompanyBrandSection extends SelectedInfoSectionBase {
+interface CompanyBrandSection extends SelectedInfoSectionBase {
   w_brand: string;
   w_brandlist: BrandDataInfo[];
   w_company: string;

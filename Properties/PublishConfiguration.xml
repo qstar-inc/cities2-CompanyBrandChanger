@@ -10,16 +10,20 @@ With just a few clicks, swap out logos, signs, and branding styles on commercial
 Note: This mod does not affect the building's underlying company or function.
 For example, an "Office_Bank" producing "Financial" will continue to do so, even if an "Electronics" brand is assigned. Only the visual branding and selected building colors updates — the simulation remains unchanged.
 
-Features:
+## Features:
 * **Change Building Brands**: Access any building with a company, and instantly switch its brand.
-* **Building Seed Randomization**: A bonus feature that let's you randomize the building's seed — reshuffling the colors and props like trees, fences, and billboards.
+* **Building Seed Randomization**: A bonus feature that let's you randomize the building's seed - reshuffling the colors and props like trees, fences, and billboards.
 
-Recommended Brand Packs:
+### Recommended Brand Packs:
 * [Real World Brand: Adobe](https://mods.paradoxplaza.com/mods/83168/Windows)
 * [Real World Brand: Apple](https://mods.paradoxplaza.com/mods/86423/Windows)
 * [Real World Brand: Discord](https://mods.paradoxplaza.com/mods/84186/Windows)
 * [Real World Brand: Paradox Interactive](https://mods.paradoxplaza.com/mods/80939/Windows)
 * [Real World Brand: Petrochemicals](https://mods.paradoxplaza.com/mods/81625/Windows)
+
+## Credits:
+* Special thanks to [krzychu](https://mods.paradoxplaza.com/authors/krzychu124) for guiding me to create my first UI published mod.
+* [BruceyBoy](https://mods.paradoxplaza.com/authors/Bruceyboy24804) for supporting the development before me.
 	</LongDescription>
 	<Thumbnail Value="Properties/Thumbnail.png" />
 	<Screenshot Value="Properties/Screenshot_01.jpg" />
@@ -29,12 +33,14 @@ Recommended Brand Packs:
 	<Screenshot Value="Properties/Screenshot_05.jpg" />
 	<Tag Value="Code Mod" />
 	<ForumLink Value="" />
-	<ModVersion Value="1.0.0" />
-	<GameVersion Value="1.2.*" />
+	<ModVersion Value="1.0.1" />
+	<GameVersion Value="1.3.3f1" />
 	<Dependency Id="" />
 	<RequiredDLC Value="" />
 	<ChangeLog>
-- Initial Release
+- Compatibility update for 1.3.3f1.
+- Removed Selected Entity Id from the list panel.
+- Add brand counts.
 	</ChangeLog>
 	<ExternalLink Type="buymeacoffee" Url="https://buymeacoffee.com/starq" />
 	<ExternalLink Type="github" Url="https://github.com/qstar-inc/cities2-CompanyBrandChanger/" />

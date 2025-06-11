@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<OutputType>Library</OutputType>
-		<TargetFramework>net472</TargetFramework>
 		<Configurations>Debug;Release</Configurations>
-		<LangVersion>9</LangVersion>
 
 		<AssemblyName>CompanyBrandChanger</AssemblyName>
 		<AssemblyTitle>Company Brand Changer</AssemblyTitle>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Authors>StarQ</Authors>
 		
 		<!--The file where mod information which is required for publishing mod on PDX mods are stored-->

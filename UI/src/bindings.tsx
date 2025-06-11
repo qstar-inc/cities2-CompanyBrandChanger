@@ -20,6 +20,7 @@ export const SetBrand = (replaceBrand: string, entity: Entity) => {
 
 export const RandomizeStyle = (entity: Entity) => {
   trigger(mod.id, "RandomizeStyle", entity);
+  console.log("click");
 };
 
 export const ClosePanel = () => {
