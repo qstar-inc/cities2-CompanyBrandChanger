@@ -30,6 +30,21 @@ export const styleCloseButton = getModule(
   "classes"
 );
 
+export const styleLevelSection = getModule(
+  "game-ui/game/components/selected-info-panel/selected-info-sections/building-sections/level-section/level-section.module.scss",
+  "classes"
+);
+
+export const styleLevelProgress = getModule(
+  "game-ui/game/components/selected-info-panel/selected-info-sections/building-sections/level-section/level-progress-bar.module.scss",
+  "classes"
+);
+
+export const styleProgress = getModule(
+  "game-ui/common/progress-bar/progress-bar.module.scss",
+  "classes"
+);
+
 export const wrapperClass = `${stylePanel.panel} ${styleSIP.selectedInfoPanel}`;
 export const closeButtonClass = `${styleCloseButton.button} ${stylePanel.closeButton}`;
 export const closeButtonImageClass = `${styleTintedIcon.tintedIcon} ${styleIcon.icon}`;

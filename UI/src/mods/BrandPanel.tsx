@@ -1,6 +1,6 @@
 import {
+  brandPanelVisibleBinding,
   ClosePanel,
-  panelVisibleBinding,
   selectedEntity,
   SetBrand,
   SizeProvider,
@@ -24,8 +24,10 @@ import {
 import { BrandDataInfo, LocaleKeys } from "types";
 
 import styles from "./BrandPanel.module.scss";
+import { PanelBase } from "./PanelBase";
 
 interface BrandPanelProps {
+  h_brand: boolean;
   w_brand: string;
   w_brandlist: BrandDataInfo[];
   w_company: string;
@@ -109,7 +111,7 @@ export const RenderRow = ({
   return (
     <div
       onClick={() => {
-        SetBrand(brand.PrefabName, entity);
+        SetBrand(brand.PrefabName);
       }}
     >
       <PanelSectionRow
@@ -144,30 +146,22 @@ export const RenderRow = ({
 
 export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
   const { translate } = useLocalization();
-  const visibleBindingValue = useValue(panelVisibleBinding);
+  const visibleBindingValue = useValue(brandPanelVisibleBinding);
   const sE = useValue(selectedEntity);
 
   const [heightFull, setHeightFull] = useState(0);
   const [panelLeft, setPanelLeft] = useState(0);
 
-  const headerText = translate(LocaleKeys.NAME) ?? "NAME";
-  const SelectedEntityTitleText =
-    translate(LocaleKeys.SELECTED_ENTITY) ?? "SELECTED_ENTITY";
-  const CurrentBrandTitleText =
-    translate(LocaleKeys.CURRENT_BRAND) ?? "CURRENT_BRAND";
-  const CurrentCompanyTitleText =
-    translate(LocaleKeys.CURRENT_COMPANY) ?? "CURRENT_COMPANY";
-  const SupportedBrandsText =
-    translate(LocaleKeys.SUPPORTED_BRANDS)?.toUpperCase() ?? "SUPPORTED_BRANDS";
-  const SupportedBrandsTooltip =
-    translate(LocaleKeys.SUPPORTED_BRANDS_TOOLTIP) ??
-    "SUPPORTED_BRANDS_TOOLTIP";
-  const OtherBrandsText =
-    translate(LocaleKeys.OTHER_BRANDS)?.toUpperCase() ?? "OTHER_BRANDS";
-  const OtherBrandsTooltip =
-    translate(LocaleKeys.OTHER_BRANDS_TOOLTIP) ?? "OTHER_BRANDS_TOOLTIP";
-  const BrandGroupHoverText =
-    translate(LocaleKeys.BRAND_GROUP_HOVER) ?? "BRAND_GROUP_HOVER";
+  const headerText = translate(LocaleKeys.BRAND_HEADER);
+  const CurrentBrandTitleText = translate(LocaleKeys.BRAND_CURRENT_BRAND);
+  const CurrentCompanyTitleText = translate(LocaleKeys.BRAND_CURRENT_COMPANY);
+  const SupportedBrandsText = translate(
+    LocaleKeys.BRAND_SUPPORTED_LIST
+  )?.toUpperCase();
+  const SupportedBrandsTooltip = translate(LocaleKeys.BRAND_SUPPORTED_TOOLTIP);
+  const OtherBrandsText = translate(LocaleKeys.BRAND_OTHER_LIST)?.toUpperCase();
+  const OtherBrandsTooltip = translate(LocaleKeys.BRAND_OTHER_TOOLTIP);
+  const BrandGroupHoverText = translate(LocaleKeys.BRAND_GROUP_HOVER);
 
   const [SupportedBrandsArray, OtherBrandsArray] = useMemo(() => {
     const supported: BrandDataInfo[] = [];
@@ -195,7 +189,10 @@ export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
     [panelLeft, heightFull]
   );
 
-  const visible = useMemo(() => visibleBindingValue, [visibleBindingValue]);
+  const visible = useMemo(
+    () => visibleBindingValue && props.h_brand,
+    [visibleBindingValue]
+  );
 
   const calculateHeights = () => {
     const wrapperElement = document.querySelector(
@@ -243,39 +240,14 @@ export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
 
   if (sE.index === 0 || !visible) return null;
 
-  const animateClass = visible ? `${styles.BrandChangerAnimate}` : ``;
-
   return (
     <>
-      <Portal>
-        <div
-          id="starq-cbc-panel"
-          className={`${wrapperClass} ${styles.BrandChangerPanel} ${animateClass}`}
-          style={wrapperStyle}
-        >
-          <div className={styleDefault.header}>
-            <div className={stylePanel.titleBar}>
-              <img
-                className={stylePanel.icon}
-                src="Media/Tools/Net Tool/Replace.svg"
-              />
-              <div className={styleDefault.title}>{headerText}</div>
-              <button className={closeButtonClass} onClick={() => ClosePanel()}>
-                <div
-                  className={closeButtonImageClass}
-                  style={{
-                    maskImage: "url(Media/Glyphs/Close.svg)",
-                  }}
-                ></div>
-              </button>
-            </div>
-          </div>
-          <div className={styleDefault.content}>
+      <PanelBase
+        header={headerText!}
+        visible={visible}
+        content={
+          <>
             <PanelSection>
-              {/* <PanelSectionRow
-                left={SelectedEntityTitleText}
-                right={`${props.w_entity.index}:${props.w_entity.version}`}
-              /> */}
               <PanelSectionRow
                 left={CurrentBrandTitleText}
                 right={props.w_brand}
@@ -287,29 +259,29 @@ export const BrandPanel: FC<BrandPanelProps> = (props: BrandPanelProps) => {
             </PanelSection>
             <PanelSection>
               <BrandSection
-                BrandsText={SupportedBrandsText}
-                BrandsTooltip={SupportedBrandsTooltip}
+                BrandsText={SupportedBrandsText!}
+                BrandsTooltip={SupportedBrandsTooltip!}
                 BrandsArrayX={SupportedBrandsArray}
-                BrandGroupHoverText={BrandGroupHoverText}
+                BrandGroupHoverText={BrandGroupHoverText!}
                 SelectedBrand={props.w_brand}
                 Entity={props.w_entity}
                 MaxHeight={210}
                 SizeProvider={sizeProviderSupported}
               />
               <BrandSection
-                BrandsText={OtherBrandsText}
-                BrandsTooltip={OtherBrandsTooltip}
+                BrandsText={OtherBrandsText!}
+                BrandsTooltip={OtherBrandsTooltip!}
                 BrandsArrayX={OtherBrandsArray}
-                BrandGroupHoverText={BrandGroupHoverText}
+                BrandGroupHoverText={BrandGroupHoverText!}
                 SelectedBrand={props.w_brand}
                 Entity={props.w_entity}
                 MaxHeight={650 - Math.min(SupportedBrandsArray.length, 7) * 30}
                 SizeProvider={sizeProviderOther}
               />
             </PanelSection>
-          </div>
-        </div>
-      </Portal>
+          </>
+        }
+      />
     </>
   );
 };

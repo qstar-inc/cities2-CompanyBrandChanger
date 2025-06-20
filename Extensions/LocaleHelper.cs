@@ -5,7 +5,7 @@ using Colossal;
 using Colossal.Json;
 using Game.SceneFlow;
 
-namespace CompanyBrandChanger.Extensions
+namespace AdvancedBuildingManager.Extensions
 {
     public class LocaleHelper
     {

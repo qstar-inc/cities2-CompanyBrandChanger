@@ -1,18 +1,18 @@
-﻿using Colossal.Logging;
-using CompanyBrandChanger.Extensions;
-using CompanyBrandChanger.Systems;
+﻿using AdvancedBuildingManager.Extensions;
+using AdvancedBuildingManager.Systems;
+using Colossal.Logging;
 using Game;
 using Game.Modding;
 using Game.SceneFlow;
 using Unity.Entities;
 
-namespace CompanyBrandChanger
+namespace AdvancedBuildingManager
 {
     public class Mod : IMod
     {
-        public static string Id = nameof(CompanyBrandChanger);
+        public static string Id = nameof(AdvancedBuildingManager);
         public static ILog log = LogManager
-            .GetLogger($"{nameof(CompanyBrandChanger)}")
+            .GetLogger($"{nameof(AdvancedBuildingManager)}")
             .SetShowsErrorsInUI(false);
 
         public void OnLoad(UpdateSystem updateSystem)
@@ -22,8 +22,8 @@ namespace CompanyBrandChanger
                 GameManager.instance.localizationManager.AddSource(item.LocaleId, item);
             }
 
-            World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<BrandDataRetriever>();
-            updateSystem.UpdateAfter<SIPCompanySectionBrand>(SystemUpdatePhase.UIUpdate);
+            World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<DataRetriever>();
+            updateSystem.UpdateAfter<SIPAdvancedBuildingManager>(SystemUpdatePhase.UIUpdate);
         }
 
         public void OnDispose() { }

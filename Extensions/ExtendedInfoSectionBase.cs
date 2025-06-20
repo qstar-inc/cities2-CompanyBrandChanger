@@ -11,7 +11,7 @@ using Game.UI.InGame;
 using Unity.Entities;
 using UnityEngine;
 
-namespace CompanyBrandChanger.Extensions
+namespace AdvancedBuildingManager.Extensions
 {
     public abstract partial class ExtendedInfoSectionBase : InfoSectionBase
     {

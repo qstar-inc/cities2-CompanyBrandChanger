@@ -13,18 +13,23 @@ export const selectedEntity = bindValue<Entity>(
   "selectedEntity"
 );
 
-export const SetBrand = (replaceBrand: string, entity: Entity) => {
-  trigger(mod.id, "SetBrand", replaceBrand, entity);
+export const SetBrand = (replaceBrand: string) => {
+  trigger(mod.id, "SetBrand", replaceBrand);
   engine.trigger("audio.playSound", "select-toggle", 1);
 };
 
-export const RandomizeStyle = (entity: Entity) => {
-  trigger(mod.id, "RandomizeStyle", entity);
-  console.log("click");
+export const RandomizeStyle = () => {
+  trigger(mod.id, "RandomizeStyle");
+};
+
+export const ChangeLevel = (level: number) => {
+  trigger(mod.id, "ChangeLevel", level);
+  console.log(`Changing to Level ${level}`);
 };
 
 export const ClosePanel = () => {
-  panelVisibleBinding.update(false);
+  brandPanelVisibleBinding.update(false);
+  levelPanelVisibleBinding.update(false);
   engine.trigger("audio.playSound", "select-item", 1);
 };
 
@@ -50,12 +55,46 @@ export const SplitTextToDiv = ({ text }: { text: string }) => {
   );
 };
 
-export const panelVisibleBinding = bindLocalValue(false);
-export const manageVisibleBinding = bindLocalValue(false);
+export const brandPanelVisibleBinding = bindLocalValue(false);
+export const levelPanelVisibleBinding = bindLocalValue(false);
 
-export const panelTrigger = (state: boolean) => {
-  panelVisibleBinding.update(state);
+export const visibleBindings = [
+  brandPanelVisibleBinding,
+  levelPanelVisibleBinding,
+];
+
+export enum PanelIndex {
+  Brand = 0,
+  Level = 1,
+}
+
+export const togglePanel = (indexToToggle: number) => {
+  const currentlyOpen = visibleBindings[indexToToggle].value;
+
+  visibleBindings.forEach((binding, i) => {
+    binding.update(i === indexToToggle ? !currentlyOpen : false);
+  });
 };
+
+// export const brandPanelTrigger = (state: boolean) => {
+//   brandPanelVisibleBinding.update(state);
+//   levelPanelVisibleBinding.update(!state);
+// };
+
+// export const levelPanelTrigger = (state: boolean) => {
+//   levelPanelVisibleBinding.update(state);
+//   brandPanelVisibleBinding.update(!state);
+// };
+
+interface InfoButtonProps extends ButtonProps {
+  label: string;
+  // tooltip?: string;
+}
+
+export const InfoButton = getModule(
+  "game-ui/game/components/selected-info-panel/shared-components/info-button/info-button.tsx",
+  "InfoButton"
+) as React.FC<InfoButtonProps>;
 
 interface ToolButtonProps extends ButtonProps {
   src: string;
