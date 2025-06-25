@@ -20,6 +20,7 @@ export class LocaleKeys {
   public static ZONING_DESCRIPTION: string = `${mod.id}.ZONING[Description]`;
   public static ZONING_CHANGE_LEVEL: string = `${mod.id}.ZONING[ChangeLevel]`;
   public static ZONING_CURRENT_UPKEEP: string = `${mod.id}.ZONING[CurrentUpkeep]`;
+  public static ZONING_CREATE_VARIANTS: string = `${mod.id}.ZONING[CreateVariants]`;
 }
 
 export interface BrandDataInfo {

@@ -24,7 +24,11 @@ export const RandomizeStyle = () => {
 
 export const ChangeLevel = (level: number) => {
   trigger(mod.id, "ChangeLevel", level);
-  console.log(`Changing to Level ${level}`);
+  // console.log(`Changing to Level ${level}`);
+};
+
+export const CreateVariants = () => {
+  trigger(mod.id, "CreateVariants");
 };
 
 export const ClosePanel = () => {

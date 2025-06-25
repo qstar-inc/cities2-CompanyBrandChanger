@@ -12,7 +12,8 @@
   "AdvancedBuildingManager.BRAND[SupportedBrandsTooltip]": "The following brands supports the current company.",
   "AdvancedBuildingManager.BRAND[BrandGroupHover]": "[?]",
   "AdvancedBuildingManager.ZONING[Header]": "Zoning & Level",
-  "AdvancedBuildingManager.ZONING[Description]": "Properties changed from this panel will apply to all building of this exact model and zone.",
+  "AdvancedBuildingManager.ZONING[Description]": "Properties changed will apply to all building of this exact model and zone. If you want to change the properties for each instance of the building individually, select 'Create Variants'.",
   "AdvancedBuildingManager.ZONING[ChangeLevel]": "Change Level",
-  "AdvancedBuildingManager.ZONING[CurrentUpkeep]": "Current Upkeep"
+  "AdvancedBuildingManager.ZONING[CurrentUpkeep]": "Current Upkeep",
+  "AdvancedBuildingManager.ZONING[CreateVariants]": "Create Variants"
 }

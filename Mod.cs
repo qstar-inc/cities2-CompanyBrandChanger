@@ -1,9 +1,11 @@
-﻿using AdvancedBuildingManager.Extensions;
+﻿using AdvancedBuildingManager.Components;
+using AdvancedBuildingManager.Extensions;
 using AdvancedBuildingManager.Systems;
 using Colossal.Logging;
 using Game;
 using Game.Modding;
 using Game.SceneFlow;
+using Game.Serialization;
 using Unity.Entities;
 
 namespace AdvancedBuildingManager
@@ -23,6 +25,7 @@ namespace AdvancedBuildingManager
             }
 
             World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<DataRetriever>();
+            updateSystem.UpdateAfter<SaveComponents>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<SIPAdvancedBuildingManager>(SystemUpdatePhase.UIUpdate);
         }
 

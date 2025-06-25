@@ -1,0 +1,19 @@
+﻿{
+  "AdvancedBuildingManager.NAME": "es-ES Advanced Building Manager",
+  "AdvancedBuildingManager.SIP[RandomizeTooltip]": "es-ES Randomize the building's seed to change billboard sizes/positions, trees, props and colors. Randomizing is irreversible. This does not change the company itself.",
+  "AdvancedBuildingManager.SIP[BrandChangerTooltip]": "es-ES Changing brand is completely visual only.\r\nIt does not affect simulation and does not change the company or the resources used/manufactured.",
+  "AdvancedBuildingManager.BRAND[Header]": "es-ES Company Brand Changer",
+  "AdvancedBuildingManager.BRAND[CurrentBrand]": "es-ES Current Brand",
+  "AdvancedBuildingManager.BRAND[CurrentCompany]": "es-ES Current Company",
+  "AdvancedBuildingManager.BRAND[OtherBrands]": "es-ES Other Brands",
+  "AdvancedBuildingManager.BRAND[OtherBrandsTooltip]": "es-ES The following brands are from companies that's not the same as the current company.\r\nSelecting any of these will not have any effect on the business/simulation either.",
+  //"AdvancedBuildingManager.BRAND[SelectedEntity]": "Selected Entity",
+  "AdvancedBuildingManager.BRAND[SupportedBrands]": "es-ES Supported Brands",
+  "AdvancedBuildingManager.BRAND[SupportedBrandsTooltip]": "es-ES The following brands supports the current company.",
+  "AdvancedBuildingManager.BRAND[BrandGroupHover]": "[?]",
+  "AdvancedBuildingManager.ZONING[Header]": "es-ES Zoning & Level",
+  "AdvancedBuildingManager.ZONING[Description]": "es-ES Properties changed will apply to all building of this exact model and zone. If you want to change the properties for each instance of the building individually, select 'Create Variants'.",
+  "AdvancedBuildingManager.ZONING[ChangeLevel]": "es-ES Change Level",
+  "AdvancedBuildingManager.ZONING[CurrentUpkeep]": "es-ES Current Upkeep",
+  "AdvancedBuildingManager.ZONING[CreateVariants]": "es-ES Create Variants"
+}

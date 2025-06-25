@@ -1,17 +1,13 @@
-import { ChangeLevel, InfoButton, levelPanelVisibleBinding } from "bindings";
+import { ChangeLevel, CreateVariants, InfoButton, levelPanelVisibleBinding } from "bindings";
 import { useValue } from "cs2/api";
 import { FOCUS_AUTO, FocusDisabled } from "cs2/input";
 import { useLocalization } from "cs2/l10n";
 import { Button, PanelSection, PanelSectionRow } from "cs2/ui";
 import { FC, useMemo } from "react";
-import {
-  styleLevelProgress,
-  styleLevelSection,
-  styleProgress,
-} from "styleBindings";
+import { styleLevelProgress, styleLevelSection, styleProgress } from "styleBindings";
 import { LocaleKeys, ZoneDataInfo } from "types";
 
-import styles from "./BrandPanel.module.scss";
+// import styles from "./BrandPanel.module.scss";
 import { PanelBase } from "./PanelBase";
 
 interface LevelPanelProps {
@@ -20,6 +16,7 @@ interface LevelPanelProps {
   w_upkeep: number;
   w_zone: string;
   w_zonelist: ZoneDataInfo[];
+  w_variant: string;
 }
 
 export const LevelPanel: FC<LevelPanelProps> = (props: LevelPanelProps) => {
@@ -30,16 +27,17 @@ export const LevelPanel: FC<LevelPanelProps> = (props: LevelPanelProps) => {
   const changeLevelText = translate(LocaleKeys.ZONING_CHANGE_LEVEL);
   const descText = translate(LocaleKeys.ZONING_DESCRIPTION);
   const currentUpkeepText = translate(LocaleKeys.ZONING_CURRENT_UPKEEP);
+  const createVariantsText = translate(LocaleKeys.ZONING_CREATE_VARIANTS);
 
-  const ChangeLevelPanel = (level: number) => {
-    ChangeLevel(level);
-  };
+  // const ChangeLevelPanel = (level: number) => {
+  //   ChangeLevel(level);
+  // };
 
   const visible = useMemo(
     () => visibleBindingValue && props.h_level,
     [visibleBindingValue]
   );
-  console.log(props.w_zone);
+  // console.log(props.w_zone);
   return (
     <>
       <PanelBase
@@ -64,7 +62,7 @@ export const LevelPanel: FC<LevelPanelProps> = (props: LevelPanelProps) => {
                           <Button
                             key={i}
                             focusKey={FOCUS_AUTO}
-                            onSelect={() => ChangeLevelPanel(i)}
+                            onSelect={() => ChangeLevel(i)}
                             className={`${styleLevelProgress.progressBar} ${styleLevelSection.levelSegment}`}
                             style={{
                               border: "none",
@@ -100,23 +98,23 @@ export const LevelPanel: FC<LevelPanelProps> = (props: LevelPanelProps) => {
                   </FocusDisabled>
                 }
               />
-            </PanelSection>
-            <PanelSection>
               <PanelSectionRow
                 uppercase={true}
                 left={currentUpkeepText}
                 right={props.w_upkeep}
               />
-            </PanelSection>
-            <PanelSection>
-              <InfoButton
-                label={"Manage"}
-                selected={true}
-                onSelect={() => console.log("AA")}
+              <PanelSectionRow
+                uppercase={true}
+                left={"Current Variant".toUpperCase()}
+                right={props.w_variant}
               />
             </PanelSection>
             <PanelSection>
-              {props.w_zonelist
+              <InfoButton
+                label={createVariantsText!}
+                onSelect={() => CreateVariants()}
+              />
+              {/* {props.w_zonelist
                 .sort((a, b) => {
                   const nameA = translate(a.Name) ?? "";
                   const nameB = translate(b.Name) ?? "";
@@ -168,7 +166,7 @@ export const LevelPanel: FC<LevelPanelProps> = (props: LevelPanelProps) => {
                       </div>
                     );
                   }
-                })}
+                })} */}
             </PanelSection>
           </>
         }

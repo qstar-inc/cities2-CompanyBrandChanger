@@ -28,6 +28,7 @@ namespace AdvancedBuildingManager.Systems
         public static int CurrentLevel { get; set; }
         public static int CurrentUpkeep { get; set; }
         public static string CurrentZoneName { get; set; }
+        public static string CurrentVariant { get; set; }
         private NameSystem nameSystem;
         private PrefabSystem prefabSystem;
         private LevelSystem levelSystem;
@@ -47,9 +48,10 @@ namespace AdvancedBuildingManager.Systems
             nameSystem = World.GetOrCreateSystemManaged<NameSystem>();
             prefabSystem = World.GetOrCreateSystemManaged<PrefabSystem>();
             levelSystem = World.GetOrCreateSystemManaged<LevelSystem>();
-            CreateTrigger<string>("SetBrand", SetBrand);
             CreateTrigger("RandomizeStyle", RandomizeStyle);
+            CreateTrigger<string>("SetBrand", SetBrand);
             CreateTrigger<int>("ChangeLevel", ChangeLevel);
+            CreateTrigger("CreateVariants", CreateVariants);
 
             isBrandDataSet = false;
             Enabled = false;
@@ -83,6 +85,9 @@ namespace AdvancedBuildingManager.Systems
 
             writer.PropertyName("w_zonelist");
             ZoneDataInfoJsonWriterExtensions.Write(writer, DataRetriever.zoneDataInfos.ToArray());
+
+            writer.PropertyName("w_variant");
+            writer.Write(CurrentVariant);
 
             writer.PropertyName("h_brand");
             writer.Write(hasBrand);
@@ -130,6 +135,9 @@ namespace AdvancedBuildingManager.Systems
                 CurrentLevel = spawnableBuildingData.m_Level;
                 CurrentUpkeep = consumptionData.m_Upkeep;
                 CurrentZoneName = prefabSystem.GetPrefabName(spawnableBuildingData.m_ZonePrefab);
+                CurrentVariant = levelSystem.UnPrefixify(
+                    prefabSystem.GetPrefabName(selectedPrefab)
+                );
             }
             //}
 
@@ -221,6 +229,17 @@ namespace AdvancedBuildingManager.Systems
                 level
             );
             SetDirty();
+        }
+
+        public void CreateVariants()
+        {
+            prefabSystem.TryGetPrefab(selectedPrefab, out PrefabBase currentPrefabBase);
+            levelSystem.CreateVariants(
+                EntityManager,
+                prefabSystem,
+                selectedEntity,
+                currentPrefabBase
+            );
         }
 
         public void SetDirty()

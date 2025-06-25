@@ -1,11 +1,6 @@
 import {
-  brandPanelVisibleBinding,
-  levelPanelVisibleBinding,
-  PanelIndex,
-  RandomizeStyle,
-  selectedEntity,
-  togglePanel,
-  ToolButton,
+    brandPanelVisibleBinding, levelPanelVisibleBinding, PanelIndex, RandomizeStyle, selectedEntity,
+    togglePanel, ToolButton
 } from "bindings";
 import { useValue } from "cs2/api";
 import { SelectedInfoSectionBase } from "cs2/bindings";
@@ -24,6 +19,8 @@ interface SIPAdvancedBuildingManager extends SelectedInfoSectionBase {
   w_upkeep: number;
   w_zone: string;
   w_zonelist: ZoneDataInfo[];
+  w_variant: string;
+
   h_brand: boolean;
   w_brand: string;
   w_brandlist: BrandDataInfo[];
@@ -107,6 +104,7 @@ export const AdvancedBuildingManagerSIP = (componentList: any): any => {
             w_upkeep={e.w_upkeep}
             w_zone={e.w_zone}
             w_zonelist={e.w_zonelist}
+            w_variant={e.w_variant}
           />
         </>
       );
