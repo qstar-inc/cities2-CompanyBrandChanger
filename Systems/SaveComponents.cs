@@ -191,15 +191,15 @@ namespace AdvancedBuildingManager.Systems
             );
             AssetDatabase.user.AddAsset(adp, newPrefabBase).Save(ContentType.Binary, true);
 
-            //EntityManager.TryGetComponent(mainEntity, out PrefabRef oldRef);
-            //Entity newRef = EntityManager.Instantiate(oldRef);
+            //entityManager.TryGetComponent(mainEntity, out PrefabRef oldRef);
+            Entity newRef = prefabSystem.GetEntity(newPrefabBase);
             //int i = 0;
 
             //Entity newPBEntity = prefabSystem.GetEntity(newPrefabBase);
-            //EntityManager.TryGetComponent(newPBEntity, out PrefabData pdO);
-            ////EntityManager.TryGetComponent(newRef, out PrefabData pdN);
+            //entityManager.TryGetComponent(newPBEntity, out PrefabData pdO);
+            ////entityManager.TryGetComponent(newRef, out PrefabData pdN);
             ////pdN.m_Index = pdO.m_Index;
-            //EntityManager.SetComponentData(newRef, pdO);
+            //entityManager.SetComponentData(newRef, pdO);
 
             //entityManager.AddComponent<Created>(newRef);
 
@@ -207,24 +207,24 @@ namespace AdvancedBuildingManager.Systems
             //{
             //    m_LotSize = new int2(currentPrefab.m_LotWidth, currentPrefab.m_LotWidth),
             //};
-            //EntityManager.TryGetComponent(oldRef, out BuildingData c1);
-            //EntityManager.SetComponentData(newRef, c1);
-            //EntityManager.TryGetComponent(oldRef, out PlaceableObjectData c2);
-            //EntityManager.SetComponentData(newRef, c2);
-            //EntityManager.TryGetComponent(oldRef, out BuildingTerraformData c3);
-            //EntityManager.SetComponentData(newRef, c3);
-            //EntityManager.TryGetComponent(oldRef, out ObjectGeometryData c4);
-            //EntityManager.SetComponentData(newRef, c4);
-            //EntityManager.TryGetComponent(oldRef, out ObjectData c5);
-            //EntityManager.SetComponentData(newRef, c5);
-            //EntityManager.TryGetSharedComponent(oldRef, out BuildingSpawnGroupData c6);
-            //EntityManager.SetSharedComponentManaged(newRef, c6);
+            //entityManager.TryGetComponent(oldRef, out BuildingData c1);
+            //entityManager.SetComponentData(newRef, c1);
+            //entityManager.TryGetComponent(oldRef, out PlaceableObjectData c2);
+            //entityManager.SetComponentData(newRef, c2);
+            //entityManager.TryGetComponent(oldRef, out BuildingTerraformData c3);
+            //entityManager.SetComponentData(newRef, c3);
+            //entityManager.TryGetComponent(oldRef, out ObjectGeometryData c4);
+            //entityManager.SetComponentData(newRef, c4);
+            //entityManager.TryGetComponent(oldRef, out ObjectData c5);
+            //entityManager.SetComponentData(newRef, c5);
+            //entityManager.TryGetSharedComponent(oldRef, out BuildingSpawnGroupData c6);
+            //entityManager.SetSharedComponentManaged(newRef, c6);
 
             //PrefabData prefabData = new() { m_Index = newRef.Index };
-            //EntityManager.SetComponentData(newRef, prefabData);
-            //if (EntityManager.TryGetBuffer(oldRef, false, out DynamicBuffer<Effect> b1o))
+            //entityManager.SetComponentData(newRef, prefabData);
+            //if (entityManager.TryGetBuffer(oldRef, false, out DynamicBuffer<Effect> b1o))
             //{
-            //    var b1n = EntityManager.AddBuffer<Effect>(newRef);
+            //    var b1n = entityManager.AddBuffer<Effect>(newRef);
             //    b1n = b1o;
             //}
 
@@ -233,9 +233,9 @@ namespace AdvancedBuildingManager.Systems
             //CopyComponent<BuildingData>(entityManager, oldRef.m_Prefab, newEntity);
             //CopyComponent<BuildingData>(entityManager, oldRef.m_Prefab, newEntity);
 
-            //EntityManager.SetComponentData(
+            //entityManager.SetComponentData(
             //    newEntity,
-            //    EntityManager.GetComponentData<PrefabData>(oldRef.m_Prefab)
+            //    entityManager.GetComponentData<PrefabData>(oldRef.m_Prefab)
             //);
 
             //List<ComponentBase> comps1 = currentPrefabBase.components;
@@ -255,8 +255,8 @@ namespace AdvancedBuildingManager.Systems
             //}
             //entityManager.AddComponent<Updated>(newRef);
 
-            //entityManager.AddComponentData(mainEntity, new PrefabRef() { m_Prefab = newRef });
-            //entityManager.AddComponent<Updated>(newRef);
+            entityManager.AddComponentData(mainEntity, new PrefabRef() { m_Prefab = newRef });
+            entityManager.AddComponent<Updated>(newRef);
             Mod.log.Info($"Created {newName} from {ogName}");
 
             //TODO: Store the ogPrefab info in a component and reload them on game load, also save to disk.
