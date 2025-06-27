@@ -188,7 +188,7 @@ namespace AdvancedBuildingManager.Systems
             {
                 Mod.log.Error(ex);
             }
-            Mod.log.Info(zoneDataInfos.ToJSONString());
+            Enabled = false;
         }
 
         protected override void OnUpdate() { }
